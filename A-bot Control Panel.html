@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-bot Control Panel</title>
+    <style>
+        body {
+            font-family: 'Monaco', monospace;
+            text-align: center;
+            margin: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        h1 {
+            color: orange;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 70px;
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px; /* Adjusted padding for equal button sizes */
+            font-size: 16px;
+            margin: 5px;
+            border: 2px solid #555;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: inline-block; /* Display buttons in the same line */
+            background-color: #ddd;
+            color: #333;
+        }
+
+        button:hover {
+            background-color: #bbb;
+        }
+
+        #whereText {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+
+<body>
+
+    <h1>A-bot </h1>
+    <h2>At your service </h2>
+
+    <p id="whereText">Where do you need me? :)</p>
+
+    <div class="button-container">
+        <button id="red" class="line-color">Classroom 1</button>
+        <button id="green" class="line-color">Classroom 2</button>
+        <button id="blue" class="line-color">Labroom</button>
+        <button id="yellow" class="line-color">Home</button>
+    </div>
+
+    <p id="status">A-bot Status:>>>Service Available ~ :-D </p>
+
+    <script>
+        $(document).ready(function(){
+            $(".line-color").click(function(){
+                var color = $(this).attr('id');
+                var location;
+
+                if(color != 'yellow'){
+                // Determine the location based on the color
+                switch(color) {
+                    case 'red':
+                        location = 'Classroom 1';
+                        break;
+                    case 'green':
+                        location = 'Classroom 2';
+                        break;
+                    case 'blue':
+                        location = 'Labroom';
+                        break;
+                    default:
+                        location = 'Unknown';
+                }
+
+                    $("#status").text('A-bot Status:>>>On my way to ' + location);
+                    // Set an interval to create an animated dot every second
+
+                    var dotCount = 0;
+                    var dotInterval = setInterval(function () {
+                    var dots = Array(dotCount % 4).fill('.').join('');
+                    $("#status").text('A-bot Status:>>>On my way to ' + location + dots);
+                    dotCount++;
+                   }, 400);
+
+                   // Clear the interval after 5 seconds (adjust as needed)
+                   setTimeout(function () {
+                    clearInterval(dotInterval);
+                   }, 20000);
+                // Set a timeout to update the status text after 3000 milliseconds (3 seconds)
+                   setTimeout(function(){
+                    $("#status").text('A-bot Status:>>>Serving at ' + location); // You can set it to whatever text you want
+                   }, 20000);}
+
+                else if(color == 'yellow'){
+                    $("#status").text('A-bot Status:>>>Returning Home');
+                    // Set an interval to create an animated dot every second
+                    var dotCount = 0;
+                    var dotInterval = setInterval(function () {
+                    var dots = Array(dotCount % 4).fill('.').join('');
+                    $("#status").text('A-bot Status:>>>Returning Home' + dots);
+                    dotCount++;
+                    }, 400);
+                    // Clear the interval after 5 seconds (adjust as needed)
+                    setTimeout(function () {
+                     clearInterval(dotInterval);
+                    },  20000);
+
+                    setTimeout(function(){
+                        $("#status").text('A-bot Status:>>>Reached Home!');
+                    }, 20000);
+                    setTimeout(function(){
+                        $("#status").text('A-bot Status:>>>Service Available ~ :-D');
+                    }, 22000);}
+
+                // Send HTTP GET request to the ESP8266 with the parameter "color"
+                $.get("http://192.168.4.1:80/", {color: color});
+            });
+        });
+    </script>
+
+</body>
+
+</html>
